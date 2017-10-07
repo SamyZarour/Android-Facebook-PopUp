@@ -116,10 +116,12 @@ public class ChatHeadService extends Service {
 
                             return true;
                         case MotionEvent.ACTION_MOVE:
-                            params.x = initialX + (int) (event.getRawX() - initialTouchX);
-                            params.y = initialY + (int) (event.getRawY() - initialTouchY);
+                            int fingerX = initialX + (int) (event.getRawX() - initialTouchX);
+                            int fingerY = initialY + (int) (event.getRawY() - initialTouchY);
+                            params.x = fingerX - bubbleView.getWidth()/2;
+                            params.y = fingerY - bubbleView.getHeight()/2;
 
-                            if((params.x >= bound_left && params.x <= bound_right && params.y <= bound_bottom && params.y >= bound_top)){
+                            if((fingerX >= bound_left && fingerX <= bound_right && fingerY <= bound_bottom && fingerY >= bound_top)){
                                 inBounded = true;
 
                                 // Grow remove view
