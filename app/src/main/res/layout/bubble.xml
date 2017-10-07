@@ -68,7 +68,7 @@
         android:layout_height="70dp"
         android:orientation="vertical"
         android:visibility="gone"
-        android:background="@drawable/circle_shape">
+        >
 
         <!--   ImageView of floating widget  -->
         <ImageView

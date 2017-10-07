@@ -6,13 +6,16 @@ import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 /**
@@ -24,10 +27,13 @@ public class ChatHeadService extends Service {
     private WindowManager windowManager;
     private RelativeLayout bubbleView;
     private RelativeLayout removeView;
+    private ImageView removeImg;
+
+    private boolean inBounded = false;
 
     private boolean isTextLongPressed = false;
     Point windowSize = new Point();
-//    private ImageView chatHead;
+    final private int REMOVE_DISTANCE_TO_BOTTOM = 100;
 
     @Override public IBinder onBind(Intent intent) {
         // Not used
@@ -59,7 +65,7 @@ public class ChatHeadService extends Service {
 
         // Create Delete View
         removeView = (RelativeLayout)inflater.inflate(R.layout.remove, null);
-        WindowManager.LayoutParams paramsRemove = new WindowManager.LayoutParams(
+        final WindowManager.LayoutParams paramsRemove = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
@@ -68,8 +74,20 @@ public class ChatHeadService extends Service {
 
         paramsRemove.gravity = Gravity.BOTTOM | Gravity.CENTER;
         removeView.setVisibility(View.GONE);
-        paramsRemove.y = 100;
+        paramsRemove.y = REMOVE_DISTANCE_TO_BOTTOM;
         windowManager.addView(removeView, paramsRemove);
+
+        // Define Delete View Boundaries
+        removeImg = (ImageView) removeView.findViewById(R.id.remove_img);
+
+        final int remove_width = removeImg.getLayoutParams().width;
+        final int remove_height = removeImg.getLayoutParams().height;
+        final int bound_left = (windowSize.x - (int) (remove_width * 1.5))/ 2;
+        final int bound_right = (windowSize.x + (int) (remove_width * 1.5))/2;
+        final int bound_top = windowSize.y - (int) (remove_height * 1.5) - REMOVE_DISTANCE_TO_BOTTOM;
+        final int bound_bottom = windowSize.y - REMOVE_DISTANCE_TO_BOTTOM;
+
+        Log.e("BOUNDS", "ORIGINAL: " + removeImg.getLayoutParams().width + ", LEFT: " + bound_left + ", RIGHT: " + bound_right + ", BOTTOM: " + bound_bottom + ", TOP: " + bound_top);
 
         bubbleView.setOnTouchListener(new View.OnTouchListener() {
             private int initialX;
@@ -89,11 +107,42 @@ public class ChatHeadService extends Service {
                         case MotionEvent.ACTION_UP:
                             isTextLongPressed = false;
                             removeView.setVisibility(View.GONE);
-                            moveToEdge(params.x);
+
+                            //If user drag and drop the floating widget view into remove view then stop the service else move it to an edge
+                            if (inBounded) {
+                                stopSelf();
+                                inBounded = false;
+                            } else moveToEdge(params.x);
+
                             return true;
                         case MotionEvent.ACTION_MOVE:
                             params.x = initialX + (int) (event.getRawX() - initialTouchX);
                             params.y = initialY + (int) (event.getRawY() - initialTouchY);
+
+                            if((params.x >= bound_left && params.x <= bound_right && params.y <= bound_bottom && params.y >= bound_top)){
+                                inBounded = true;
+
+                                // Grow remove view
+                                removeImg.getLayoutParams().height = (int) (remove_height * 1.5);
+                                removeImg.getLayoutParams().width = (int) (remove_width * 1.5);
+                                removeImg.setLayoutParams(removeImg.getLayoutParams());
+
+                                // Set buble in remove view
+                                params.x = (windowSize.x - bubbleView.getWidth())/2;
+                                params.y = (windowSize.y - (int) (bubbleView.getHeight() * 1.5) - REMOVE_DISTANCE_TO_BOTTOM);
+                                Log.e("ABS", "ABS: " + windowSize.y + ", Bubble: " + bubbleView.getHeight() + ", REMOVE_CONST: " + REMOVE_DISTANCE_TO_BOTTOM);
+                                Log.e("RESULT", "RES: " + (windowSize.y - bubbleView.getHeight() - REMOVE_DISTANCE_TO_BOTTOM));
+                                Log.e("REMOVE POS", "X: " + paramsRemove.x + "Y: " + paramsRemove.y);
+                                Log.e("FLOAT POS", "X: " + params.x + ", Y: " + params.y);
+                            } else{
+                                inBounded = false;
+
+                                // Shrink remove view
+                                removeImg.getLayoutParams().height = remove_height;
+                                removeImg.getLayoutParams().width = remove_width;
+                                removeImg.setLayoutParams(removeImg.getLayoutParams());
+                            }
+
                             windowManager.updateViewLayout(bubbleView, params);
                             return true;
                     }
@@ -105,6 +154,7 @@ public class ChatHeadService extends Service {
         bubbleView.setOnLongClickListener(new View.OnLongClickListener(){
             @Override
             public boolean onLongClick(View v) {
+                v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                 isTextLongPressed = true;
                 removeView.setVisibility(View.VISIBLE);
                 return false;
@@ -122,6 +172,8 @@ public class ChatHeadService extends Service {
                 else expanded.setVisibility(View.GONE);
                 if (collapse.getVisibility() == View.GONE) collapse.setVisibility(View.VISIBLE);
                 else collapse.setVisibility(View.GONE);
+
+                Log.e("MEASUREMENTS","X: " + params.x + ", Y: " + params.y);
             }
         });
 
