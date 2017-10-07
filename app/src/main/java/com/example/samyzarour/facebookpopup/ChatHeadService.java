@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.Vibrator;
@@ -74,6 +75,7 @@ public class ChatHeadService extends Service {
 
         paramsRemove.gravity = Gravity.BOTTOM | Gravity.CENTER;
         removeView.setVisibility(View.GONE);
+        paramsRemove.dimAmount = 0.7f;
         paramsRemove.y = REMOVE_DISTANCE_TO_BOTTOM;
         windowManager.addView(removeView, paramsRemove);
 
