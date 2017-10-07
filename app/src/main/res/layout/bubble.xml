@@ -1,14 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/chathead_relativelayout">
-    
-    <ImageView android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/chathead_img"
-        android:src="@mipmap/ic_launcher_round" />
-    
-   
+<!--   Root container of Floating Widget View  -->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
+    <!--   View while view is expanded   -->
+    <LinearLayout
+        android:id="@+id/expanded_container"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp"
+       >
+
+        <ImageView
+            android:id="@+id/floating_widget_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:src="@mipmap/ic_launcher" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/floating_widget_title_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/floating_widget_label"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/floating_widget_detail_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/floating_widget_details"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!--  ImageView to Open Activity  -->
+        <ImageView
+            android:id="@+id/open_activity_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dp"
+            android:src="@drawable/ic_aspect_ratio_black_24dp" />
+    </LinearLayout>
+
+    <!--  View while view is collapsed  -->
+
+    <LinearLayout
+        android:id="@+id/collapse_view"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@drawable/circle_shape">
+
+        <!--   ImageView of floating widget  -->
+        <ImageView
+            android:id="@+id/collapsed_iv"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:src="@mipmap/ic_launcher_round"
+            tools:ignore="ContentDescription" />
+
+    </LinearLayout>
 </RelativeLayout>

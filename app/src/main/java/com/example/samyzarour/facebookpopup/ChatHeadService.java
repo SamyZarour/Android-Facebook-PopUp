@@ -24,6 +24,7 @@ public class ChatHeadService extends Service {
     private WindowManager windowManager;
     private RelativeLayout bubbleView;
     private RelativeLayout removeView;
+
     private boolean isTextLongPressed = false;
     Point windowSize = new Point();
 //    private ImageView chatHead;
@@ -114,7 +115,24 @@ public class ChatHeadService extends Service {
         bubbleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("CLICKED", "TRUE");
+                View expanded = bubbleView.findViewById(R.id.expanded_container);
+                View collapse = bubbleView.findViewById(R.id.collapse_view);
+
+                if (expanded.getVisibility() == View.GONE) expanded.setVisibility(View.VISIBLE);
+                else expanded.setVisibility(View.GONE);
+                if (collapse.getVisibility() == View.GONE) collapse.setVisibility(View.VISIBLE);
+                else collapse.setVisibility(View.GONE);
+            }
+        });
+
+        bubbleView.findViewById(R.id.open_activity_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //open the activity and stop service
+                Intent intent = new Intent(ChatHeadService.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                stopSelf();
             }
         });
 

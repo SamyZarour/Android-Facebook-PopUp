@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FacebookPopUp</string>
+    <string name="floating_widget_label">Floating Widget Label</string>
+    <string name="floating_widget_details">Floating Widget Details</string>
 </resources>
