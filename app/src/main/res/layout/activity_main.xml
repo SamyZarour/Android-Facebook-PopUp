@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.samyzarour.facebookpopup.MainActivity" >
+
+    <TextView
+        android:id="@+id/permissionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:padding="30dp"
+        android:text="This apps needs permission to be activated. Click on the button below for the permissions window to pop up"/>
+
+    <Button
+        android:id="@+id/permissionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="get permission"
+        android:layout_below="@+id/permissionText"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/startPop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="start chat head service"
+        android:layout_marginTop="27dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/stopPop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="39dp"
+        android:text="stop chat head service"
+        android:layout_below="@+id/startPop"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
